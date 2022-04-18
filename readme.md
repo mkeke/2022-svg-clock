@@ -6,6 +6,8 @@ This is a realtime clock that consists of 4 x 6 x 6 = 144 discs resembling clock
 
 Check it out here: https://lysebo.xyz/misc/svg-clock/
 
+Created during the Easter holiday of 2022.
+
 # original concept
 
 The clock is inspired by the tech art project [A Million Times 120](https://www.humanssince1982.com/a-million-times-120) by Swedish/German art duo [Humans since 1982](https://www.humanssince1982.com/) in 2016.
@@ -31,19 +33,19 @@ at least one full round before settling in the correct position. To acommodate t
 
 ## file structure, render, zquery
 
-I'm using a gulp based build system that compiles sass, includes variables defined in project.js, and many other things. There is a render function in project.js which makes it possible to pre-render data. In this case the `SVGDigit` variable, which is included once for every digit in the HTML page.
+I'm using a Gulp based build system that compiles SASS, includes variables defined in project.js, and many other things. There is a render function in `project.js` which makes it possible to pre-render data. In this case the `SVGDigit` variable, which is included once for every digit in `index.html`.
 
-main.js includes zquery which is a tiny DOM access/manipulation library along the lines of jQuery.
+`main.js` includes "zquery" which is a tiny self made DOM access/manipulation library along the lines of jQuery.
 
 These things are not included in this repo, but you get the idea.
 
 ## grid layout + aspect-ratio ftw
 
-Using `display: grid` on the digits and experimenting with different fraction sizes was super easy! Also, `aspect-ratio` makes for hassle-free css. No need for percentage calculations or padding-bottoms.
+Using `display: grid` on the digits and experimenting with different fraction sizes was super easy! Also, `aspect-ratio` makes for hassle-free CSS. No need for percentage calculations or padding-bottom trickery.
 
 ## sass digits
 
-I'm using a 2d sass array to define the direction of each clock hand for every digit,
+I'm using a 2d SASS array to define the direction of each clock hand for every digit,
 and a function for generating the correct rotation transforms.
 
 ```
@@ -69,7 +71,7 @@ x = hand is not used
 
 ## kb size concern!
 
-sass generates a lot of css for hand rotation. Approx 92 KB of this:
+SASS generates a lot of CSS for hand rotation. Approx 92 KB of this:
 
 ```
 .digit div.d0 g path:nth-child(1) { transform: rotate(360deg); }
@@ -90,7 +92,7 @@ There are 960 individual hand positions
 The additional `-webkit-transform()` fills up 32 KB alone!
 
 The `nth-child()` selector for each clock hand is somewhat verbose.
-Replacing `nth-child()` with a simple class identifier (`h1 - h48`) instead saves 7 KB, but I don't like to have class names for everything.
+Replacing `nth-child()` with a simple class identifier (`.h1 - .h48`) instead saves 7 KB, but I don't like to have class names for everything.
 
 I'm pretty sure the clock would use far less KB if the rotation was calculated runtime and set as inline CSS on each hand. Still, I have a feeling that the browser performs better with predefined stuff rather than having to calculate everything all the time.
 
