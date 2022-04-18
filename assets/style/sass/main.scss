@@ -1,0 +1,193 @@
+/*
+    normalize
+*/
+* {
+    margin: 0; padding: 0;
+}
+
+ul {
+    list-style: none;
+}
+
+html, body {
+    height: 100%;
+}
+
+/*
+    look and feel
+*/
+body {
+    background-color: #eee;
+}
+circle {
+    stroke-width: 1;
+    stroke: #999;
+    fill: white;
+}
+path {
+    stroke-width: 6;
+    stroke: black;
+    fill: none;
+}
+.digit.hour path {
+    stroke-width: 8;
+}
+.digit.sec circle {
+    stroke-width: 2;
+    fill: #ddd;
+}
+.digit.sec path {
+    stroke-width: 10;
+}
+
+/*
+    clock hand transition timing
+*/
+.digit div g path {
+    transition: transform 5s ease-in-out;
+}
+.digit:nth-child(5) div g path {
+    transition: transform 2s ease-in-out;
+}
+.digit:last-child div g path {
+    transition: transform .5s ease-in-out;
+}
+
+/*
+    grid setup
+*/
+
+.layout {
+    position: relative;
+}
+.content {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+    height: auto;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.clock {
+    display: grid;
+    grid-template-columns: repeat(4, 2fr) repeat(2, 1fr);
+    grid-template-rows: auto;
+    grid-column-gap: 10px;
+    width: 100%;
+}
+
+.digit {
+    aspect-ratio: 4/6;
+    width: 100%;
+    position: relative;
+
+    &.sec {
+        align-self: end;
+    }
+}
+
+/*
+    origin and default position of clock hands
+*/
+.digit div g path {
+    transform-box: fill-box;
+    transform-origin: left center;
+
+    // start position of clock hands
+    &:nth-child(odd) {
+        transform: rotate(135deg);
+    }
+    &:nth-child(even) {
+        transform: rotate(-230deg);
+    }
+}
+
+
+
+// define hand position for all digits and let sass do the dirty work
+// r l u d = right left up down. x = hand not in use
+// the hands are defined per column, from top to bottom
+$digits: (
+    r d u d u d u d u d u r   l r r d u d u d u r l r   l r l d u d u d u l l r   l d u d u d u d u d u l,
+    r d u r x x x x r d u r   l r l d u d u d u l l r   l d u d u d u d u r l r   x x x x x x x x l d u l,
+    r d u r r d u d u d u r   l r l r l r r d u r l r   l r l d u l l r l r l r   l d u d u d u l l d u l,
+    r d u r x x x x r d u r   r l r l r d u r r l r l   r l l d u l l d u l l r   l d u d u d u d u d u l,
+    r d u d u d u r x x x x   l d u d u r l r x x x x   r d u d u l l d u d u r   l d u d u d u d u d u l,
+    r d u d u d u r r d u r   l r r d u r l r l r l r   l r l r l r l d u l l r   l d u l l d u d u d u l,
+    r d u d u d u d u d u r   l r r d u r r d u r l r   l r l r l r l d u l l r   l d u l l d u d u d u l,
+    r d u r x x x x x x x x   l r l r x x x x x x x x   l r l d u d u d u d u r   l d u d u d u d u d u l,
+    r d u d u d u d u d u r   l r r d u r r d u r l r   l r l d u l l d u l l r   l d u d u d u d u d u l,
+    r d u d u d u r x x x x   l r r d u r l r x x x x   l r l d u l l d u d u r   l d u d u d u d u d u l
+);
+
+// number of degrees to add (makes for some fun effects)
+$addition: 0;
+
+// create keyframes FORWARDS direction
+@for $d from 0 to length($digits) {
+    .digit div.d#{$d} g path {
+
+        @for $i from 0 to 48 {
+            &:nth-child(#{$i + 1}) {
+                $s: nth(nth($digits, $d + 1), $i + 1);
+                $deg: 0;
+
+                @if $i % 2 == 0 {
+                    @if      $s == "u" { $deg: 270; }
+                    @else if $s == "d" { $deg: 90; }
+                    @else if $s == "l" { $deg: 180; }
+                    @else if $s == "r" { $deg: 360; }
+                    @else { $deg: 135; }
+                    $deg: $deg + $addition;
+                } @else {
+                    @if      $s == "u" { $deg: -90; }
+                    @else if $s == "d" { $deg: -270; }
+                    @else if $s == "l" { $deg: -180; }
+                    @else if $s == "r" { $deg: -360; }
+                    @else { $deg: -230; }
+                    $deg: $deg - $addition;
+                }
+
+                transform: rotate(#{$deg}deg); 
+            }
+        }
+
+    }
+}
+
+// create keyframes BACKWARDS direction
+@for $d from 0 to length($digits) {
+    .digit div.bd#{$d} g path {
+
+        @for $i from 0 to 48 {
+            &:nth-child(#{$i + 1}) {
+                $s: nth(nth($digits, $d + 1), $i + 1);
+                $deg: 0;
+
+                @if $i % 2 == 1 {
+                    @if      $s == "u" { $deg: 270; }
+                    @else if $s == "d" { $deg: 90; }
+                    @else if $s == "l" { $deg: 180; }
+                    @else if $s == "r" { $deg: 360; }
+                    @else { $deg: 135; }
+                    $deg: $deg + $addition;
+                } @else {
+                    @if      $s == "u" { $deg: -90; }
+                    @else if $s == "d" { $deg: -270; }
+                    @else if $s == "l" { $deg: -180; }
+                    @else if $s == "r" { $deg: -360; }
+                    @else { $deg: -230; }
+                    $deg: $deg - $addition;
+                }
+
+                transform: rotate(#{$deg}deg);
+            }
+        }
+
+    }
+}
